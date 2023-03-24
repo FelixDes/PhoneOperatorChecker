@@ -1,0 +1,6 @@
+postgres:
+  user: postgres
+  password: postgres
+  db: postgres
+  port: 5555
+  host: "127.0.0.1"
