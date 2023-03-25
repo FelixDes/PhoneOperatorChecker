@@ -2,7 +2,7 @@ from dependency_injector import providers, containers
 from dependency_injector.containers import DeclarativeContainer
 
 from backend.config.PostgresConnectionPool import PostgresConnectionPool
-from backend.services.PhoneRepository import PhoneRepository
+from backend.services.PhoneService import PhoneService
 
 
 class MainContainer(DeclarativeContainer):
@@ -12,4 +12,4 @@ class MainContainer(DeclarativeContainer):
     config.from_yaml("db_config.yaml")
 
     pg_pool = providers.Singleton(PostgresConnectionPool, pg_config=config.postgres)
-    phone_repository = providers.Factory(PhoneRepository, pg_pool=pg_pool)
+    phone_repository = providers.Factory(PhoneService, pg_pool=pg_pool)

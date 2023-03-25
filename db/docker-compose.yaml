@@ -11,5 +11,6 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./data/MNP.csv:/MNP.csv
+      - ./data/Numbers-Plan-9.csv:/Numbers-Plan-9.csv
 
       - ./postgres-data:/var/lib/postgresql/data
