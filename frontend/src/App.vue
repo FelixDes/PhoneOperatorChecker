@@ -6,6 +6,6 @@
   </v-app>
 </template>
 
-<script setup lang="ts">
-  import PhoneChecker from '@/components/PhoneChecker.vue'
+<script setup>
+  import PhoneChecker from "@/components/PhoneChecker.vue";
 </script>
