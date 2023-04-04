@@ -11,7 +11,7 @@
                     Get provider
                 </v-btn>
                 <v-divider vertical v-if="resShow"></v-divider>
-                <v-card v-if="resShow" class="mt-4">
+                <v-card v-if="resShow" class="mt-4 pa-3">
                     <span>{{ provider }}</span>
                 </v-card>
             </v-col>
@@ -52,9 +52,6 @@ export default {
         },
         preparePhone(phoneNumber) {
             let pn = String(phoneNumber);
-            if (pn.startsWith("+")) {
-                pn=pn.substring(1)
-            }
             pn=pn.substring(1)
             return pn;
         }
