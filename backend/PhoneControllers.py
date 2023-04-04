@@ -1,9 +1,9 @@
 from dependency_injector.wiring import inject, Provide
 from flask import request, Response
 
-from backend.MainContainer import MainContainer
-from backend.exceptions.ServiceException import ServiceException
-from backend.services.PhoneService import PhoneService
+from MainContainer import MainContainer
+from ServiceException import ServiceException
+from PhoneService import PhoneService
 
 
 @inject

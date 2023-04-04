@@ -1,5 +1,5 @@
-from backend.config.PostgresConnectionPool import PostgresConnectionPool
-from backend.exceptions.ServiceException import ServiceException
+import PostgresConnectionPool
+from ServiceException import ServiceException
 
 
 class PhoneService:
