@@ -1,5 +1,17 @@
 version: '3.9'
 services:
+  frontend:
+    build: ./frontend
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    networks:
+      - backend-internal
+    depends_on:
+      - flask
+    volumes:
+      - ./frontend:/frontend
+
   flask:
     build: ./backend
     restart: on-failure
@@ -16,8 +28,8 @@ services:
 
   phone-db:
     image: postgres:alpine
-#    ports:
-#      - "5555:5432"
+    ports:
+      - "5555:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
