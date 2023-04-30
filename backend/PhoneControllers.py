@@ -1,7 +1,7 @@
 import json
 
 from dependency_injector.wiring import inject, Provide
-from flask import request, Response, jsonify
+from flask import request, Response
 
 from MainContainer import MainContainer
 from ServiceException import ServiceException
@@ -26,5 +26,4 @@ def api(phone_rep: PhoneService = Provide[MainContainer.phone_repository]):
             r.response = [json.dumps({"provider": res[0], "region": res[1]})]
     except ServiceException:
         r.status = 400
-
     return r

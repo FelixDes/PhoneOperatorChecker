@@ -26,9 +26,9 @@ services:
     build: ./nginx
     restart: always
     volumes:
-      - ./nginx/conf.d/app.conf:/etc/nginx/nginx.conf
+      - ./nginx/app.conf:/etc/nginx/nginx.conf
     ports:
-      - "8181:80"
+      - "8001:80"
     depends_on:
       - frontend
       - flask
