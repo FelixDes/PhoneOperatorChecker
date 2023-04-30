@@ -6,15 +6,23 @@
         <v-responsive class="d-flex text-center fill-height">
             <v-col class="mt-10">
                 <span class="align-start">Paste your phone number</span>
-                <vue-tel-input @input="preparePhone"></vue-tel-input>
-                <v-btn @click="submit">
+                <vue-tel-input @input="preparePhone" mode="international" class="mb-1"></vue-tel-input>
+                <v-btn @click="submit" :disabled="!isValid" class="my-2">
                     Get provider
                 </v-btn>
                 <v-divider vertical v-if="resShow"></v-divider>
-                <v-card v-if="resShow" class="d-flex mt-4 pa-3 flex-column">
+                <v-card elevation="2" v-if="resShow" class="d-flex mt-4 pa-3 flex-column">
                     <span>{{ provider }}</span>
                     <span>{{ region }}</span>
                 </v-card>
+                <Transition name="bounce">
+                    <v-alert
+                            v-if="errorShow"
+                            type="error"
+                            title="Error"
+                            text="Input data isn't valid"
+                    ></v-alert>
+                </Transition>
             </v-col>
         </v-responsive>
     </v-container>
@@ -29,37 +37,58 @@ export default {
     components: {
         VueTelInput,
     },
-    data() {
-        return {
-            phone: null,
-            resShow: false,
-            provider: '',
-            region: '',
-        }
-    },
+    data: () => ({
+        phone: null,
+        isValid: false,
+
+        resShow: false,
+        errorShow: false,
+
+        provider: '',
+        region: '',
+    }),
+
     methods: {
         submit() {
-            this.$root.doGet("/?phoneNumber=" + this.preparePhone(this.phone), {
+            this.$root.doGet("/?phoneNumber=" + this.phone, {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Credentials': true,
             }).then((res) => {
-                console.log(res)
                 this.resShow = true
+                this.errorShow = false
+
                 this.provider = res.provider
                 this.region = res.region
+            }).catch((e) => {
+                this.errorShow = true
+                setTimeout(() => {
+                    this.errorShow = false
+                }, 2000)
             })
         },
         preparePhone(phone, phoneObject) {
-            if (phoneObject?.formatted) {
+            this.isValid = phoneObject ? (phoneObject?.valid ?? false) : this.isValid
+            if (phoneObject?.valid) {
                 this.phone = phoneObject.nationalNumber
             }
-            // console.log(phone + " | " + JSON.stringify(phoneObject))
-
         }
     }
 }
 </script>
 
 <style scoped>
-
+.bounce-enter-active {
+  animation: bounce-in 0.3s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.3s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 </style>
