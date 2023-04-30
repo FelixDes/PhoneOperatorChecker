@@ -6,13 +6,14 @@
         <v-responsive class="d-flex text-center fill-height">
             <v-col class="mt-10">
                 <span class="align-start">Paste your phone number</span>
-                <v-text-field :rules="rules" v-model="phone"></v-text-field>
+                <vue-tel-input @input="preparePhone"></vue-tel-input>
                 <v-btn @click="submit">
                     Get provider
                 </v-btn>
                 <v-divider vertical v-if="resShow"></v-divider>
-                <v-card v-if="resShow" class="mt-4 pa-3">
+                <v-card v-if="resShow" class="d-flex mt-4 pa-3 flex-column">
                     <span>{{ provider }}</span>
+                    <span>{{ region }}</span>
                 </v-card>
             </v-col>
         </v-responsive>
@@ -20,40 +21,40 @@
 </template>
 
 <script>
-
-import axios from "axios"
+import {VueTelInput} from 'vue3-tel-input'
+import 'vue3-tel-input/dist/vue3-tel-input.css'
 
 export default {
     name: "PhoneChecker",
+    components: {
+        VueTelInput,
+    },
     data() {
         return {
             phone: null,
             resShow: false,
             provider: '',
-            rules: [
-                value => !!value || 'Required.',
-                value => {
-                    const pattern = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
-                    return pattern.test(value) || 'Invalid phone number.'
-                },
-            ],
+            region: '',
         }
     },
     methods: {
         submit() {
-            axios.get("http://127.0.0.1:5000/?phoneNumber=" + this.preparePhone(this.phone), {
-                    "Access-Control-Allow-Origin": "*",
-                    'Access-Control-Allow-Credentials': true,
-                }
-            ).then((res) => {
+            this.$root.doGet("/?phoneNumber=" + this.preparePhone(this.phone), {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Credentials': true,
+            }).then((res) => {
+                console.log(res)
                 this.resShow = true
-                this.provider = res.data
+                this.provider = res.provider
+                this.region = res.region
             })
         },
-        preparePhone(phoneNumber) {
-            let pn = String(phoneNumber);
-            pn=pn.substring(1)
-            return pn;
+        preparePhone(phone, phoneObject) {
+            if (phoneObject?.formatted) {
+                this.phone = phoneObject.nationalNumber
+            }
+            // console.log(phone + " | " + JSON.stringify(phoneObject))
+
         }
     }
 }
