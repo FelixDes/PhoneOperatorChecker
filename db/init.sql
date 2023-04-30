@@ -28,7 +28,7 @@ COPY MovedPhoneNumbers (phoneNumber, operatorName)
     DELIMITER ','
     CSV HEADER;
 
-create function get_number_operator(pn bigint)
+create function get_number_provider(pn bigint)
     returns VARCHAR(512)
     language plpgsql
 as
@@ -37,5 +37,16 @@ begin
     return (select COALESCE((select operatorName from MovedPhoneNumbers where phonenumber = pn),
                     (select operatorName from PhoneNumbers ps where pn / 10000000 = ps.code and
                     mod(pn, 10000000)between ps.rangestart and ps.rangeend)));
+end;
+$$;
+
+create function get_number_region(pn bigint)
+    returns VARCHAR(512)
+    language plpgsql
+as
+$$
+begin
+    return (select location from PhoneNumbers ps where pn / 10000000 = ps.code and
+                    mod(pn, 10000000) between ps.rangestart and ps.rangeend);
 end;
 $$;
