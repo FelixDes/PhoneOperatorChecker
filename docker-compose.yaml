@@ -2,11 +2,8 @@ version: '3.9'
 services:
   frontend:
     build: ./frontend
-    restart: on-failure
-    ports:
-      - "3000:3000"
     networks:
-      - backend-internal
+      - frontend_nw
     depends_on:
       - flask
     volumes:
@@ -18,24 +15,35 @@ services:
     stop_signal: SIGINT
     volumes:
       - ./backend:/backend
-    ports:
-      - "5000:5000"
     networks:
-      - backend-internal
+      - backend_nw
     depends_on:
       - phone-db
-    command: gunicorn -b 0.0.0.0:5000 app:app
+    command: gunicorn -b flask:5000 app:app
+
+  webserver:
+    image: nginx:latest
+    build: ./nginx
+    restart: always
+    volumes:
+      - ./nginx/conf.d/app.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8181:80"
+    depends_on:
+      - frontend
+      - flask
+    networks:
+      - frontend_nw
+      - backend_nw
 
   phone-db:
     image: postgres:alpine
-    ports:
-      - "5555:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     networks:
-      - backend-internal
+      - backend_nw
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 5s
@@ -45,9 +53,8 @@ services:
       - ./db/data/MNP.csv:/MNP.csv
       - ./db/data/Numbers-Plan-9.csv:/Numbers-Plan-9.csv
 
-#      - ./db/postgres-data:/var/lib/postgresql/data
+      - ./db/postgres-data:/var/lib/postgresql/data
 
 networks:
-  backend-internal:
-    driver: bridge
-    external: true
+  frontend_nw:
+  backend_nw:
