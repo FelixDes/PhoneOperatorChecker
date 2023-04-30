@@ -18,11 +18,13 @@ def api(phone_rep: PhoneService = Provide[MainContainer.phone_repository]):
 
     if len(str(int(phone_number))) != 10:
         r.status = 422
-        return r
     try:
         res = phone_rep.get_data(phone_number)
-        r.response = json.dumps({"provider": res[0], "region": res[1]})
-        return r
+        if res[0] is None or res[1] is None:
+            r.status = 422
+        else:
+            r.response = [json.dumps({"provider": res[0], "region": res[1]})]
     except ServiceException:
         r.status = 400
-        return r
+
+    return r

@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 import PostgresConnectionPool
@@ -21,7 +22,6 @@ class PhoneService:
             r2 = cur.fetchone()
 
             cur.close()
-            self._pg_pool.put_connection(conn)
             return [r1[0], r2[0]]
         except TypeError:
             raise ServiceException("Something went wrong during getting the operator name for " + phone_number)
