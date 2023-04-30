@@ -1,5 +1,7 @@
+import json
+
 from dependency_injector.wiring import inject, Provide
-from flask import request, Response
+from flask import request, Response, jsonify
 
 from MainContainer import MainContainer
 from ServiceException import ServiceException
@@ -7,7 +9,7 @@ from PhoneService import PhoneService
 
 
 @inject
-def index(phone_rep: PhoneService = Provide[MainContainer.phone_repository]):
+def api(phone_rep: PhoneService = Provide[MainContainer.phone_repository]):
     phone_number = request.args.get("phoneNumber", default="", type=str)
     r = Response()
     r.headers["Access-Control-Allow-Origin"] = "*"
@@ -18,8 +20,8 @@ def index(phone_rep: PhoneService = Provide[MainContainer.phone_repository]):
         r.status = 422
         return r
     try:
-        res = phone_rep.get_provider(phone_number)
-        r.response = str(res)
+        res = phone_rep.get_data(phone_number)
+        r.response = json.dumps({"provider": res[0], "region": res[1]})
         return r
     except ServiceException:
         r.status = 400
