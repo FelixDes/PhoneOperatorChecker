@@ -20,10 +20,10 @@ def api(phone_rep: PhoneService = Provide[MainContainer.phone_repository]):
         r.status = 422
     try:
         res = phone_rep.get_data(phone_number)
-        if res[0] is None or res[1] is None:
+        if res[1] is None or res[2] is None:
             r.status = 422
         else:
-            r.response = [json.dumps({"provider": res[0], "region": res[1]})]
+            r.response = [json.dumps({"original_provider": res[0], "current_provider": res[1], "region": res[2]})]
     except ServiceException:
         r.status = 400
     return r

@@ -12,7 +12,9 @@
                 </v-btn>
                 <v-divider vertical v-if="resShow"></v-divider>
                 <v-card elevation="2" v-if="resShow" class="d-flex mt-4 pa-3 flex-column">
-                    <span>{{ provider }}</span>
+                    <span>{{
+                        current_provider === original_provider ? current_provider : `${original_provider} -> ${current_provider}`
+                        }}</span>
                     <span>{{ region }}</span>
                 </v-card>
                 <Transition name="bounce">
@@ -44,7 +46,8 @@ export default {
         resShow: false,
         errorShow: false,
 
-        provider: '',
+        original_provider: '',
+        current_provider: '',
         region: '',
     }),
 
@@ -57,7 +60,8 @@ export default {
                 this.resShow = true
                 this.errorShow = false
 
-                this.provider = res.provider
+                this.current_provider = res.current_provider
+                this.original_provider = res.original_provider
                 this.region = res.region
             }).catch((e) => {
                 this.errorShow = true
@@ -78,17 +82,19 @@ export default {
 
 <style scoped>
 .bounce-enter-active {
-  animation: bounce-in 0.3s;
+    animation: bounce-in 0.3s;
 }
+
 .bounce-leave-active {
-  animation: bounce-in 0.3s reverse;
+    animation: bounce-in 0.3s reverse;
 }
+
 @keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 </style>

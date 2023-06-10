@@ -15,13 +15,16 @@ class PhoneService:
             conn = self._pg_pool.get_connection()
             cur = conn.cursor()
 
-            cur.execute("select get_number_provider(" + phone_number + ");")
-            r1 = cur.fetchone()
+            cur.execute("select get_original_number_provider(" + phone_number + ");")
+            original_provider = cur.fetchone()
+
+            cur.execute("select get_current_number_provider(" + phone_number + ");")
+            current_provider = cur.fetchone()
 
             cur.execute("select get_number_region(" + phone_number + ");")
-            r2 = cur.fetchone()
+            region = cur.fetchone()
 
             cur.close()
-            return [r1[0], r2[0]]
+            return [original_provider[0], current_provider[0], region[0]]
         except TypeError:
             raise ServiceException("Something went wrong during getting the operator name for " + phone_number)
